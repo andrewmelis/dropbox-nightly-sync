@@ -45,11 +45,11 @@ func upload(client dropbox.Api, srcPath string, dstPath string) {
 	commitInfo.Mode.Tag = "overwrite" // dangerous!
 	// commitInfo.Autorename = true	  // set if change to 'add' or 'update'
 
-	metadata, err := client.Upload(commitInfo, contents)
+	_, err = client.Upload(commitInfo, contents)
 	if err != nil {
 		fmt.Printf("✗ Error uploading %s to %s: %+v\n", srcPath, dstPath, err)
 	} else {
-		fmt.Printf("✓ Uploaded %s to %s:\n%+v\n", srcPath, dstPath, metadata)
+		fmt.Printf("✓ Uploaded %s to %s\n", srcPath, dstPath)
 	}
 }
 
