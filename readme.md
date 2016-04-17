@@ -1,5 +1,12 @@
-I often use an old laptop that once had an entire glass of water spilled on it.
+My laptop starts overheating if I run the official [dropbox daemon](https://www.dropbox.com/install?os=lnx).
 
-The laptop is fairly unreliable and starts overheating if I run the official [dropbox daemon](https://www.dropbox.com/install?os=lnx).
+Run this hand-rolled dropbox sync script in a cron job as a more lightweight solution.
 
-This script lets me sync my Notes folder to dropbox on command.
+```
+$ crontab -e
+```
+
+Add:
+```
+@daily /home/andrew/development/go/bin/dropbox-nightly-sync
+```
