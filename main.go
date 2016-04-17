@@ -52,17 +52,3 @@ func upload(client dropbox.Api, srcPath string, dstPath string) {
 		fmt.Printf("✓ Uploaded %s to %s\n", srcPath, dstPath)
 	}
 }
-
-func listRemoteFiles(client dropbox.Api, path string) {
-	arg := files.NewListFolderArg(path)
-
-	resp, err := client.ListFolder(arg)
-	if err != nil {
-		fmt.Printf("%+v\n", err.Error())
-		return
-	}
-
-	for i, entry := range resp.Entries {
-		fmt.Printf("%d: type %T\n %+v\n\n", i, entry.File, entry.File)
-	}
-}
