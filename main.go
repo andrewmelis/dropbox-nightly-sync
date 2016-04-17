@@ -11,21 +11,24 @@ import (
 
 const (
 	token = "insert token here"
-	notesPath = "/home/andrew/Notes/"
+	notesPath  = "/home/andrew/Notes/"
+	remotePath = "/nightly-dropbox-sync/"
 )
 
 func main() {
+	var options dropbox.Options
+	api := dropbox.Client(token, options)
+
 	files, err := ioutil.ReadDir(notesPath)
 	if err != nil {
 		fmt.Printf("%+v", err.Error())
 	}
-	for _, file := range files {
-		absPath := notesPath + file.Name()
-		fmt.Printf("%s\n", absPath)
-	}
 
-	// var options dropbox.Options
-	// api := dropbox.Client(token, options)
+	for _, file := range files {
+		srcPath := notesPath + file.Name()
+		dstPath := remotePath + file.Name()
+		upload(api, srcPath, dstPath)
+	}
 
 	// fmt.Printf("\nList remote files once...\n")
 	// listRemoteFiles(api, "/nightly-dropbox-sync")
