@@ -31,20 +31,6 @@ func main() {
 	}
 }
 
-func listRemoteFiles(client dropbox.Api, path string) {
-	arg := files.NewListFolderArg(path)
-
-	resp, err := client.ListFolder(arg)
-	if err != nil {
-		fmt.Printf("%+v\n", err.Error())
-		return
-	}
-
-	for i, entry := range resp.Entries {
-		fmt.Printf("%d: type %T\n %+v\n\n", i, entry.File, entry.File)
-	}
-}
-
 func upload(client dropbox.Api, srcPath string, dstPath string) {
 	contents, err := os.Open(srcPath)
 	if err != nil {
@@ -61,3 +47,18 @@ func upload(client dropbox.Api, srcPath string, dstPath string) {
 		fmt.Printf("✓ Uploaded %s to %s:\n%+v\n", srcPath, dstPath, metadata)
 	}
 }
+
+func listRemoteFiles(client dropbox.Api, path string) {
+	arg := files.NewListFolderArg(path)
+
+	resp, err := client.ListFolder(arg)
+	if err != nil {
+		fmt.Printf("%+v\n", err.Error())
+		return
+	}
+
+	for i, entry := range resp.Entries {
+		fmt.Printf("%d: type %T\n %+v\n\n", i, entry.File, entry.File)
+	}
+}
+
