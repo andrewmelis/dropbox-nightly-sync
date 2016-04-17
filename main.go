@@ -42,7 +42,7 @@ func upload(client dropbox.Api, srcPath string, dstPath string) {
 
 	commitInfo := files.NewCommitInfo(dstPath)
 	commitInfo.ClientModified = time.Now().UTC().Truncate(time.Second) // requires format '%Y-%m-%dT%H:%M:%SZ'
-	commitInfo.Mode.Tag = "overwrite" // dangerous!
+	commitInfo.Mode.Tag = "overwrite"                                  // dangerous!
 	// commitInfo.Autorename = true	  // set if change to 'add' or 'update'
 
 	_, err = client.Upload(commitInfo, contents)
