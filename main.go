@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
-	"path/filepath"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/files"
@@ -15,16 +15,13 @@ const (
 )
 
 func main() {
-
-	
-	files, err := retrieveLocalFileList(notesPath)
+	files, err := ioutil.ReadDir(notesPath)
 	if err != nil {
-		fmt.Printf("%s\n", err.Error())
-		return
+		fmt.Printf("%+v", err.Error())
 	}
-
 	for _, file := range files {
-		fmt.Printf("%s\n", file)
+		absPath := notesPath + file.Name()
+		fmt.Printf("%s\n", absPath)
 	}
 
 	// var options dropbox.Options
@@ -40,15 +37,6 @@ func main() {
 
 	// fmt.Printf("\nList remote files twice...\n")
 	// listRemoteFiles(api, "/nightly-dropbox-sync")
-}
-
-func retrieveLocalFileList(dir string) (fileList []string, err error) {
-	fileList = make([]string, 5) // what is the best starting length?
-	err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		fileList = append(fileList, path)
-		return nil
-	})
-	return
 }
 
 func listRemoteFiles(client dropbox.Api, path string) {
