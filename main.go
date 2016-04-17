@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"time"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/files"
@@ -40,8 +41,10 @@ func upload(client dropbox.Api, srcPath string, dstPath string) {
 	defer contents.Close()
 
 	commitInfo := files.NewCommitInfo(dstPath)
+	commitInfo.ClientModified = time.Now().UTC().Truncate(time.Second) // requires format '%Y-%m-%dT%H:%M:%SZ'
 	commitInfo.Mode.Tag = "overwrite" // dangerous!
 	// commitInfo.Autorename = true	  // set if change to 'add' or 'update'
+
 	metadata, err := client.Upload(commitInfo, contents)
 	if err != nil {
 		fmt.Printf("✗ Error uploading %s to %s: %+v\n", srcPath, dstPath, err)
