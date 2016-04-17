@@ -63,4 +63,3 @@ func listRemoteFiles(client dropbox.Api, path string) {
 		fmt.Printf("%d: type %T\n %+v\n\n", i, entry.File, entry.File)
 	}
 }
-
