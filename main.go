@@ -18,24 +18,48 @@ const (
 
 func main() {
 	var options dropbox.Options
-	api := dropbox.Client(token, options)
+	client := dropbox.Client(token, options)
+
+	fileNameCh := make(chan string)
+	outputCh := make(chan string)
 
 	files, err := ioutil.ReadDir(notesPath)
 	if err != nil {
 		fmt.Printf("%+v", err.Error())
 	}
 
+	for i := 0; i < 10; i++ {
+		go uploadWorker(client, fileNameCh, outputCh)
+	}
+
 	for _, file := range files {
-		srcPath := notesPath + file.Name()
-		dstPath := remotePath + file.Name()
-		upload(api, srcPath, dstPath)
+		fileNameCh <- file.Name()
+	}
+
+	for i := 0; i < len(files); i++ {
+		fmt.Printf("%s\n", <-outputCh)
 	}
 }
 
-func upload(client dropbox.Api, srcPath string, dstPath string) {
+func uploadWorker(client dropbox.Api, fileNameCh chan string, outputCh chan string) {
+	for {
+		fileName := <-fileNameCh
+
+		srcPath := notesPath + fileName
+		dstPath := remotePath + fileName
+
+		err := upload(client, srcPath, dstPath)
+		if err != nil {
+			outputCh <- fmt.Sprintf("✗ Error uploading %s to %s: %+v\n", srcPath, dstPath, err)
+		} else {
+			outputCh <- fmt.Sprintf("✓ Uploaded %s to %s\n", srcPath, dstPath)
+		}
+	}
+}
+
+func upload(client dropbox.Api, srcPath string, dstPath string) (err error) {
 	contents, err := os.Open(srcPath)
 	if err != nil {
-		fmt.Printf("%+v\n", err.Error())
 		return
 	}
 	defer contents.Close()
@@ -46,9 +70,5 @@ func upload(client dropbox.Api, srcPath string, dstPath string) {
 	// commitInfo.Autorename = true                                    // set if change to 'add' or 'update'
 
 	_, err = client.Upload(commitInfo, contents)
-	if err != nil {
-		fmt.Printf("✗ Error uploading %s to %s: %+v\n", srcPath, dstPath, err)
-	} else {
-		fmt.Printf("✓ Uploaded %s to %s\n", srcPath, dstPath)
-	}
+	return
 }
