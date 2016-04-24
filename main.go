@@ -29,7 +29,7 @@ func main() {
 	}
 
 	for i := 0; i < 10; i++ {
-		go uploadWorker(client, fileNameCh, outputCh)
+		go uploadWorker(i, client, fileNameCh, outputCh)
 	}
 
 	for _, file := range files {
@@ -41,7 +41,7 @@ func main() {
 	}
 }
 
-func uploadWorker(client dropbox.Api, fileNameCh chan string, outputCh chan string) {
+func uploadWorker(i int, client dropbox.Api, fileNameCh chan string, outputCh chan string) {
 	for {
 		fileName := <-fileNameCh
 
@@ -50,9 +50,9 @@ func uploadWorker(client dropbox.Api, fileNameCh chan string, outputCh chan stri
 
 		err := upload(client, srcPath, dstPath)
 		if err != nil {
-			outputCh <- fmt.Sprintf("✗ Error uploading %s to %s: %+v\n", srcPath, dstPath, err)
+			outputCh <- fmt.Sprintf("%d: ✗ Error uploading %s to %s: %+v\n", i, srcPath, dstPath, err)
 		} else {
-			outputCh <- fmt.Sprintf("✓ Uploaded %s to %s\n", srcPath, dstPath)
+			outputCh <- fmt.Sprintf("%d: ✓ Uploaded %s to %s\n", i, srcPath, dstPath)
 		}
 	}
 }
