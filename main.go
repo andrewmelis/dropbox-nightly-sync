@@ -17,6 +17,8 @@ const (
 )
 
 func main() {
+	start := time.Now()
+
 	var options dropbox.Options
 	client := dropbox.Client(token, options)
 
@@ -39,6 +41,8 @@ func main() {
 	for i := 0; i < len(files); i++ {
 		fmt.Printf("%s\n", <-outputCh)
 	}
+
+	fmt.Printf("%.2fs elapsed\n", time.Since(start).Seconds())
 }
 
 func uploadWorker(i int, client dropbox.Api, fileNameCh chan string, outputCh chan string) {
