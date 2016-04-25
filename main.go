@@ -17,6 +17,7 @@ const (
 )
 
 func main() {
+	start := time.Now()
 	var options dropbox.Options
 	api := dropbox.Client(token, options)
 
@@ -30,6 +31,8 @@ func main() {
 		dstPath := remotePath + file.Name()
 		upload(api, srcPath, dstPath)
 	}
+
+	fmt.Printf("%.2fs elapsed\n", time.Since(start).Seconds())
 }
 
 func upload(client dropbox.Api, srcPath string, dstPath string) {
